@@ -24,7 +24,7 @@ function App() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [id, showModal]);
 
   const handleCallback = (idFromWilder: number) => {
     setId(idFromWilder);
@@ -55,10 +55,14 @@ function App() {
           wilder={wilders}
           idFromWilder={handleCallback}
           onWilderDeleted={() => fetchData()}
+          id={0}
+          name={""}
+          city={""}
+          upvotes={0}
         />
         <Modal
-          show={undefined}
-          id={undefined}
+          show={false}
+          id={0}
           refresh={function (): void {}}
           onClose={function (): void {}}
         />

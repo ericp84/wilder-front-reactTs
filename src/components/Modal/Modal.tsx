@@ -7,8 +7,8 @@ const Modal = (props: {
   refresh: () => void;
   onClose: Function;
 }) => {
-  const [newName, setNewName] = useState("");
-  const [newCity, setNewCity] = useState("");
+  const [newName, setNewName] = useState<string>("");
+  const [newCity, setNewCity] = useState<string>("");
 
   if (!props.show) {
     return null;
@@ -28,7 +28,7 @@ const Modal = (props: {
   };
 
   return (
-    <div className="modal">
+    <div className="modal" onClick={(e) => props.onClose(e.target)}>
       <div
         className="modal-content"
         onClick={(e) => {

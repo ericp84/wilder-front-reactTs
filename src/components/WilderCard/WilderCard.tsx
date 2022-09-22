@@ -3,21 +3,11 @@ import Skill from "../Skill/Skill";
 import Modal from "../Modal/Modal";
 import "./WilderCard.css";
 import { useState } from "react";
+import { Iwilder } from "../../interfaces";
 
-interface Iwilder {
-  id: number;
-  name: string;
-  city: string;
-  upvotes: any;
-}
-
-const WilderCard = (props: {
-  onWilderDeleted: Function;
-  wilder?: any;
-  idFromWilder: Function;
-}) => {
-  const [id, setId] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+const WilderCard = (props: Iwilder): JSX.Element => {
+  const [id, setId] = useState<number>(0);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleDelete = async (id: number) => {
     props.onWilderDeleted();
@@ -54,7 +44,15 @@ const WilderCard = (props: {
               nisi ut aliquip ex ea commodo consequat.
             </p>
             <h4>Wild Skills</h4>
-            <Skill skills={wild.upvotes} />
+            {/* <Skill skills={wild.upvotes} onUpvote={props.onWilderDeleted()} /> */}
+            <Skill
+              skills={wild.upvotes}
+              id={0}
+              name={""}
+              upvote={0}
+              upvotes={0}
+              refresh={() => props.onWilderDeleted()}
+            />
             <div className="btn-cont">
               <button
                 className="btn"

@@ -6,9 +6,9 @@ const ModalCreate = (props: {
   onWilderAdded: () => Function;
   onClose: Function;
 }) => {
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-  const [stackName, setStackName] = useState("");
+  const [name, setName] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [stackName, setStackName] = useState<string>("");
   // const [stackId, setStackId] = useState(0);
   // const [wilderId, setWilderId] = useState(0);
 
@@ -16,7 +16,7 @@ const ModalCreate = (props: {
     return null;
   }
 
-  const handleCreateStack = async () => {
+  const handleCreateStack = async (): Promise<void> => {
     await fetch(`http://localhost:3000/api/skills/create/`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -40,7 +40,7 @@ const ModalCreate = (props: {
   };
 
   return (
-    <div className="modal">
+    <div className="modal" onClick={(e) => props.onClose(e.target)}>
       <div
         className="modal-content"
         onClick={(e) => {
