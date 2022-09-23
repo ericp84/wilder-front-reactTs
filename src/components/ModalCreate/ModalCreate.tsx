@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./ModalCreate.css";
 
 const ModalCreate = (props: {
@@ -9,35 +9,69 @@ const ModalCreate = (props: {
   const [name, setName] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [stackName, setStackName] = useState<string>("");
-  // const [stackId, setStackId] = useState(0);
-  // const [wilderId, setWilderId] = useState(0);
+  // const [stackList, setStackList] = useState<[]>([]);
+  const [stackId, setStackId] = useState<number>(0);
+  const [wilderId, setWilderId] = useState<number>(0);
 
-  if (!props.show) {
-    return null;
-  }
-
-  const handleCreateStack = async (): Promise<void> => {
-    await fetch(`http://localhost:3000/api/skills/create/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `name=${stackName}`,
-    });
-    setStackName("");
-  };
+  // const handleStackList = async (): Promise<void> => {
+  //   const stackRequest = await fetch(`http://localhost:3000/api/skills`);
+  //   const stackResponse = await stackRequest.json();
+  //   setStackList(stackResponse);
+  // };
+  // useEffect(() => {
+  //   handleStackList();
+  // }, []);
 
   const handleCreate = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    await fetch(`http://localhost:3000/api/wilders/create/`, {
+    const request = await fetch(`http://localhost:3000/api/wilders/create/`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `name=${name}&city=${city}`,
     });
+    const response = await request.json();
+    setWilderId(response.id);
+    handleUpvote();
     handleCreateStack();
-    props.onWilderAdded();
     props.onClose();
     setName("");
     setCity("");
   };
+
+  const handleCreateStack = async (): Promise<void> => {
+    const request = await fetch(`http://localhost:3000/api/skills/create/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `name=${stackName}`,
+    });
+    const response = await request.json();
+    setStackId(response.id);
+    setStackName("");
+    await handleUpvote();
+  };
+
+  const handleUpvote = async () => {
+    await fetch(`http://localhost:3000/api/upvotes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `wilderId=${wilderId}&skillId=${stackId}`,
+    });
+    props.onWilderAdded();
+  };
+
+  const handleUpload = async () => {
+    await fetch(`http://localhost:3000/api/upload`, {
+      method: "POST",
+    });
+  };
+
+  // useEffect(() => {
+  //   props.onWilderAdded();
+  // }, [props, stackId, wilderId]);
+
+  if (!props.show) {
+    return null;
+  }
 
   return (
     <div className="modal" onClick={(e) => props.onClose(e.target)}>
@@ -51,7 +85,12 @@ const ModalCreate = (props: {
           <h2>TITLE</h2>
         </div>
         <div className="modal-body">
-          <form className="form" action="POST" onSubmit={handleCreate}>
+          <form
+            className="form"
+            action="POST"
+            encType="multipart/form-data"
+            onSubmit={handleCreate}
+          >
             <div className="input-container">
               <label htmlFor="name">name</label>
               <input
@@ -71,7 +110,7 @@ const ModalCreate = (props: {
                   setCity(e.target.value);
                 }}
               />
-              <label htmlFor="stack">stack</label>
+              <label htmlFor="stack">add stack</label>
               <input
                 type="text"
                 className="stack"
@@ -80,6 +119,20 @@ const ModalCreate = (props: {
                   setStackName(e.target.value);
                 }}
               />
+              <form
+                action="/api/upload"
+                method="post"
+                encType="multipart/form-data"
+                className="upload"
+              >
+                <label htmlFor="avatar">add avatar</label>
+                <input
+                  type="file"
+                  name="avatar"
+                  className="file-upload"
+                  onChange={handleUpload}
+                />
+              </form>
               <button className="btn" type="submit" value="Valider">
                 {" "}
                 Valider

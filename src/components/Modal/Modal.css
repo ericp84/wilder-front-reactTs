@@ -1,4 +1,4 @@
-.modal {
+.modal-update {
   position: fixed;
   left: 0;
   top: 0;
@@ -10,7 +10,7 @@
   justify-content: center;
 }
 
-.modal-content {
+.modal-content-update {
   border-radius: 10px;
   box-shadow: 10px 10px 15px;
   display: flex;
@@ -22,7 +22,7 @@
   height: auto;
 }
 
-.modal-header,
+.modal-header-update,
 .modal-footer {
   padding: 10px;
 }
@@ -38,13 +38,13 @@
   margin: 0;
 }
 
-.modal-body {
+.modal-body-update {
   padding: 30px;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
 }
 
-.input-container {
+.input-container-update {
   width: 400px;
   height: 200px;
   display: flex;

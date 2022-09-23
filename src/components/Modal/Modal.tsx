@@ -28,19 +28,19 @@ const Modal = (props: {
   };
 
   return (
-    <div className="modal" onClick={(e) => props.onClose(e.target)}>
+    <div className="modal-update" onClick={(e) => props.onClose(e.target)}>
       <div
-        className="modal-content"
+        className="modal-content-update"
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
-        <div className="modal-header">
+        <div className="modal-header-update">
           <h2>TITLE</h2>
         </div>
-        <div className="modal-body">
+        <div className="modal-body-update">
           <form className="form" onSubmit={handleUpdate}>
-            <div className="input-container">
+            <div className="input-container-update">
               <label htmlFor="name">name</label>
               <input
                 type="text"

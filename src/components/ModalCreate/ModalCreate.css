@@ -68,3 +68,11 @@ input {
   box-shadow: 3px 2px 20px rgb(255, 255, 255);
   margin-top: 1rem;
 }
+
+.upload {
+  margin: 5px 0 5px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
