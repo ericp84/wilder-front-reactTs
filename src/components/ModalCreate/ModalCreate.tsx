@@ -10,8 +10,8 @@ const ModalCreate = (props: {
   const [city, setCity] = useState<string>("");
   const [stackName, setStackName] = useState<string>("");
   // const [stackList, setStackList] = useState<[]>([]);
-  const [stackId, setStackId] = useState<number>(0);
-  const [wilderId, setWilderId] = useState<number>(0);
+  const [stackId, setStackId] = useState<number>(1);
+  const [wilderId, setWilderId] = useState<number>(1);
 
   // const handleStackList = async (): Promise<void> => {
   //   const stackRequest = await fetch(`http://localhost:3000/api/skills`);
@@ -21,6 +21,14 @@ const ModalCreate = (props: {
   // useEffect(() => {
   //   handleStackList();
   // }, []);
+  const handleUpvote = async () => {
+    await fetch(`http://localhost:3000/api/upvotes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `wilderId=${wilderId}&skillId=${stackId}`,
+    });
+    props.onWilderAdded();
+  };
 
   const handleCreate = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -32,7 +40,7 @@ const ModalCreate = (props: {
     const response = await request.json();
     setWilderId(response.id);
     handleUpvote();
-    handleCreateStack();
+    await handleCreateStack();
     props.onClose();
     setName("");
     setCity("");
@@ -48,15 +56,6 @@ const ModalCreate = (props: {
     setStackId(response.id);
     setStackName("");
     await handleUpvote();
-  };
-
-  const handleUpvote = async () => {
-    await fetch(`http://localhost:3000/api/upvotes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `wilderId=${wilderId}&skillId=${stackId}`,
-    });
-    props.onWilderAdded();
   };
 
   const handleUpload = async () => {

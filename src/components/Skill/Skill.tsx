@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Iskill } from "../../interfaces";
 
 // interface Iskill {
@@ -12,30 +12,38 @@ import { Iskill } from "../../interfaces";
 // }
 
 const Skill = (props: Iskill) => {
-  const [stackId, setStackId] = useState<number>(0);
+  const [stackId, setStackId] = useState<number>(1);
 
-  const upcount = (id: number): void => {
-    props.refresh();
-    setStackId(id);
-    handleUpvote();
-  };
-
-  const handleUpvote = async (): Promise<void> => {
+  const handleUpvote = useCallback(async (): Promise<void> => {
     await fetch(`http://localhost:3000/api/upvotes/${stackId}/upvote`, {
       method: "PUT",
     });
-  };
+  }, [stackId]);
+
+  const upcount = useCallback(
+    async (id: number): Promise<void> => {
+      await handleUpvote().then(() => props.refresh());
+    },
+    [handleUpvote]
+  );
+
+  useEffect(() => {
+    upcount(stackId);
+    handleUpvote();
+  }, [handleUpvote, stackId, upcount]);
 
   return (
     <>
       <ul className="skills">
         {props.skills.map((skill: any) => {
+          console.log(props.skills);
           return (
             <li key={skill.id}>
               {skill.skill.name}
               <span
                 className="votes"
                 onClick={() => {
+                  setStackId(skill.id);
                   upcount(skill.id);
                 }}
               >

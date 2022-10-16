@@ -43,3 +43,7 @@ p {
   background-color: rgb(255, 255, 255);
   box-shadow: 3px 2px 20px red;
 }
+
+.votes:hover {
+  cursor: pointer;
+}
