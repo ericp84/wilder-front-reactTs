@@ -1,5 +1,34 @@
 import { useState } from "react";
 import "./Modal.css";
+import { useQuery, gql, useMutation } from "@apollo/client";
+
+const GET_WILDERS = gql`
+  query Wilders {
+    wilders {
+      id
+      name
+      city
+      upvotes {
+        id
+        upvotes
+        skill {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+const UPDATE_WILDER = gql`
+  mutation Mutation($city: String!, $name: String!, $updateWilderId: ID!) {
+    updateWilder(city: $city, name: $name, id: $updateWilderId) {
+      id
+      name
+      city
+    }
+  }
+`;
 
 const Modal = (props: {
   show: any;
@@ -10,16 +39,18 @@ const Modal = (props: {
   const [newName, setNewName] = useState<string>("");
   const [newCity, setNewCity] = useState<string>("");
 
+  const [updateWilder] = useMutation(UPDATE_WILDER, {
+    refetchQueries: [{ query: GET_WILDERS }],
+  });
+
   if (!props.show) {
     return null;
   }
 
   const handleUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    await fetch(`http://localhost:3000/api/wilders/update/${props.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `name=${newName}&city=${newCity}`,
+    updateWilder({
+      variables: { name: newName, city: newCity, updateWilderId: props.id },
     });
     props.refresh();
     props.onClose();

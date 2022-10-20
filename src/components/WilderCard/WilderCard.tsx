@@ -4,18 +4,54 @@ import Modal from "../Modal/Modal";
 import "./WilderCard.css";
 import { useState } from "react";
 import { Iwilder } from "../../interfaces";
+import { useQuery, gql, useMutation } from "@apollo/client";
+
+const GET_WILDERS = gql`
+  query Wilders {
+    wilders {
+      id
+      name
+      city
+      upvotes {
+        id
+        upvotes
+        skill {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+const DELETE_WILDER = gql`
+  mutation Mutation($deleteOneWilderId: ID!) {
+    deleteOneWilder(id: $deleteOneWilderId) {
+      id
+      name
+      city
+      upvotes {
+        id
+      }
+    }
+  }
+`;
 
 const WilderCard = (props: Iwilder): JSX.Element => {
   const [id, setId] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
 
+  const { loading, error, data, refetch } = useQuery(GET_WILDERS);
+
+  const [deleteWilder] = useMutation(DELETE_WILDER, {
+    refetchQueries: [{ query: GET_WILDERS }],
+  });
+
   const handleDelete = async (id: number) => {
+    deleteWilder({ variables: { deleteOneWilderId: id } });
     props.onWilderDeleted();
     const { idFromWilder } = props;
     idFromWilder(id);
-    await fetch(`http://localhost:3000/api/wilders/deleteone/${id}`, {
-      method: "DELETE",
-    });
   };
 
   const handleUpdate = async (id: number) => {
@@ -31,7 +67,7 @@ const WilderCard = (props: Iwilder): JSX.Element => {
         show={showModal}
         refresh={() => props.onWilderDeleted()}
       />
-      {props.wilder.map((wild: Iwilder) => {
+      {data?.wilders.map((wild: Iwilder) => {
         return (
           <article className="card" key={wild.id}>
             <img src={Blank_Profile} alt="Jane Doe Profile" />

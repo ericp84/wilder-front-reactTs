@@ -1,68 +1,89 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./ModalCreate.css";
+import { useMutation, gql } from "@apollo/client";
+const GET_WILDERS = gql`
+  query Wilders {
+    wilders {
+      id
+      name
+      city
+      upvotes {
+        id
+        upvotes
+        skill {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
+const CREATE_WILDER = gql`
+  mutation CreateWilder($city: String!, $name: String!) {
+    createWilder(city: $city, name: $name) {
+      id
+      name
+      city
+    }
+  }
+`;
+// const CREATE_UPVOTE = gql`
+//   mutation CreateUpvote($skillId: ID!, $wilderId: ID!) {
+//     createUpvote(skillId: $skillId, wilderId: $wilderId) {
+//       id
+//       upvotes
+//     }
+//   }
+// `;
 const ModalCreate = (props: {
   show: boolean;
   onWilderAdded: () => Function;
   onClose: Function;
+  id: number;
 }) => {
+  console.log("🚀 ~ file: ModalCreate.tsx ~ line 166 ~ props", props.id);
+
   const [name, setName] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [stackName, setStackName] = useState<string>("");
   // const [stackList, setStackList] = useState<[]>([]);
-  const [stackId, setStackId] = useState<number>(1);
-  const [wilderId, setWilderId] = useState<number>(1);
+  // const [stackId, setStackId] = useState<number>(1);
+  // const [wilderId, setWilderId] = useState<number>(1);
 
-  // const handleStackList = async (): Promise<void> => {
-  //   const stackRequest = await fetch(`http://localhost:3000/api/skills`);
-  //   const stackResponse = await stackRequest.json();
-  //   setStackList(stackResponse);
-  // };
-  // useEffect(() => {
-  //   handleStackList();
-  // }, []);
-  const handleUpvote = async () => {
-    await fetch(`http://localhost:3000/api/upvotes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `wilderId=${wilderId}&skillId=${stackId}`,
-    });
-    props.onWilderAdded();
-  };
+  const [createWilder] = useMutation(CREATE_WILDER, {
+    refetchQueries: [{ query: GET_WILDERS }],
+  });
+  // const [createUpvote] = useMutation(CREATE_UPVOTE, {
+  //   refetchQueries: [{ query: GET_WILDERS }],
+  // });
 
   const handleCreate = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const request = await fetch(`http://localhost:3000/api/wilders/create/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `name=${name}&city=${city}`,
-    });
-    const response = await request.json();
-    setWilderId(response.id);
-    handleUpvote();
-    await handleCreateStack();
+    createWilder({ variables: { name, city } });
+    props.onWilderAdded();
     props.onClose();
-    setName("");
-    setCity("");
   };
+  // const handleUpvote = async () => {
+  //   await fetch(`http://localhost:3000/api/upvotes`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  //     body: `wilderId=${wilderId}&skillId=${stackId}`,
+  //   });
+  //   props.onWilderAdded();
+  // };
 
-  const handleCreateStack = async (): Promise<void> => {
-    const request = await fetch(`http://localhost:3000/api/skills/create/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `name=${stackName}`,
-    });
-    const response = await request.json();
-    setStackId(response.id);
-    setStackName("");
-    await handleUpvote();
-  };
+  // const handleCreateStack = async (): Promise<void> => {
+  //   createUpvote({variables: {skillId: stackId, wilderId: wilderId}})
+  //   setStackName("");
+  //   await handleUpvote();
+  // };
 
-  const handleUpload = async () => {
-    await fetch(`http://localhost:3000/api/upload`, {
-      method: "POST",
-    });
-  };
+  // const handleUpload = async () => {
+  //   await fetch(`http://localhost:3000/api/upload`, {
+  //     method: "POST",
+  //   });
+  // };
 
   // useEffect(() => {
   //   props.onWilderAdded();
@@ -88,7 +109,9 @@ const ModalCreate = (props: {
             className="form"
             action="POST"
             encType="multipart/form-data"
-            onSubmit={handleCreate}
+            onSubmit={(e) => {
+              handleCreate(e);
+            }}
           >
             <div className="input-container">
               <label htmlFor="name">name</label>
@@ -129,7 +152,7 @@ const ModalCreate = (props: {
                   type="file"
                   name="avatar"
                   className="file-upload"
-                  onChange={handleUpload}
+                  // onChange={handleUpload}
                 />
               </form>
               <button className="btn" type="submit" value="Valider">

@@ -8,7 +8,7 @@ import Footer from "./components/Footer/Footer";
 
 function App() {
   const [wilders, setWilders] = useState<Array<string>>([]);
-  const [id, setId] = useState<Number>(0);
+  const [id, setId] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const fetchData = async (): Promise<Function> => {
@@ -47,6 +47,7 @@ function App() {
           Create Wilder
         </button>
         <ModalCreate
+          id={id}
           onClose={(): any => setShowModal(false)}
           show={showModal}
           onWilderAdded={() => fetchData}
