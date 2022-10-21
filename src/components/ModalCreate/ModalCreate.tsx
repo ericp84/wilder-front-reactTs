@@ -1,41 +1,9 @@
 import { useState } from "react";
 import "./ModalCreate.css";
-import { useMutation, gql } from "@apollo/client";
-const GET_WILDERS = gql`
-  query Wilders {
-    wilders {
-      id
-      name
-      city
-      upvotes {
-        id
-        upvotes
-        skill {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
+import { useMutation } from "@apollo/client";
+import { CREATE_WILDER, CREATE_SKILL } from "../../graphql/mutation";
+import GET_WILDERS from "../../graphql/queries";
 
-const CREATE_WILDER = gql`
-  mutation CreateWilder($city: String!, $name: String!) {
-    createWilder(city: $city, name: $name) {
-      id
-      name
-      city
-    }
-  }
-`;
-// const CREATE_UPVOTE = gql`
-//   mutation CreateUpvote($skillId: ID!, $wilderId: ID!) {
-//     createUpvote(skillId: $skillId, wilderId: $wilderId) {
-//       id
-//       upvotes
-//     }
-//   }
-// `;
 const ModalCreate = (props: {
   show: boolean;
   onWilderAdded: () => Function;
@@ -47,47 +15,20 @@ const ModalCreate = (props: {
   const [name, setName] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [stackName, setStackName] = useState<string>("");
-  // const [stackList, setStackList] = useState<[]>([]);
-  // const [stackId, setStackId] = useState<number>(1);
-  // const [wilderId, setWilderId] = useState<number>(1);
-
   const [createWilder] = useMutation(CREATE_WILDER, {
     refetchQueries: [{ query: GET_WILDERS }],
   });
-  // const [createUpvote] = useMutation(CREATE_UPVOTE, {
-  //   refetchQueries: [{ query: GET_WILDERS }],
-  // });
+  const [createSkill] = useMutation(CREATE_SKILL, {
+    refetchQueries: [{ query: GET_WILDERS }],
+  });
 
   const handleCreate = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     createWilder({ variables: { name, city } });
+    createSkill({ variables: { name: stackName } });
     props.onWilderAdded();
     props.onClose();
   };
-  // const handleUpvote = async () => {
-  //   await fetch(`http://localhost:3000/api/upvotes`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  //     body: `wilderId=${wilderId}&skillId=${stackId}`,
-  //   });
-  //   props.onWilderAdded();
-  // };
-
-  // const handleCreateStack = async (): Promise<void> => {
-  //   createUpvote({variables: {skillId: stackId, wilderId: wilderId}})
-  //   setStackName("");
-  //   await handleUpvote();
-  // };
-
-  // const handleUpload = async () => {
-  //   await fetch(`http://localhost:3000/api/upload`, {
-  //     method: "POST",
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   props.onWilderAdded();
-  // }, [props, stackId, wilderId]);
 
   if (!props.show) {
     return null;

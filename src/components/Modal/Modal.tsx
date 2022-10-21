@@ -1,34 +1,8 @@
 import { useState } from "react";
 import "./Modal.css";
-import { useQuery, gql, useMutation } from "@apollo/client";
-
-const GET_WILDERS = gql`
-  query Wilders {
-    wilders {
-      id
-      name
-      city
-      upvotes {
-        id
-        upvotes
-        skill {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
-const UPDATE_WILDER = gql`
-  mutation Mutation($city: String!, $name: String!, $updateWilderId: ID!) {
-    updateWilder(city: $city, name: $name, id: $updateWilderId) {
-      id
-      name
-      city
-    }
-  }
-`;
+import { useMutation } from "@apollo/client";
+import GET_WILDERS from "../../graphql/queries";
+import { UPDATE_WILDER } from "../../graphql/mutation";
 
 const Modal = (props: {
   show: any;

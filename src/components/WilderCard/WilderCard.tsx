@@ -2,46 +2,18 @@ import Blank_Profile from "../../assets/Blank_Profile.png";
 import Skill from "../Skill/Skill";
 import Modal from "../Modal/Modal";
 import "./WilderCard.css";
+import GET_WILDERS from "../../graphql/queries";
+import { DELETE_WILDER } from "../../graphql/mutation";
 import { useState } from "react";
 import { Iwilder } from "../../interfaces";
-import { useQuery, gql, useMutation } from "@apollo/client";
-
-const GET_WILDERS = gql`
-  query Wilders {
-    wilders {
-      id
-      name
-      city
-      upvotes {
-        id
-        upvotes
-        skill {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
-const DELETE_WILDER = gql`
-  mutation Mutation($deleteOneWilderId: ID!) {
-    deleteOneWilder(id: $deleteOneWilderId) {
-      id
-      name
-      city
-      upvotes {
-        id
-      }
-    }
-  }
-`;
+import { useQuery, useMutation } from "@apollo/client";
 
 const WilderCard = (props: Iwilder): JSX.Element => {
   const [id, setId] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const { loading, error, data, refetch } = useQuery(GET_WILDERS);
+  const { data } = useQuery(GET_WILDERS);
+  console.log("🚀 ~ file: WilderCard.tsx ~ line 16 ~ WilderCard ~ data", data);
 
   const [deleteWilder] = useMutation(DELETE_WILDER, {
     refetchQueries: [{ query: GET_WILDERS }],
@@ -68,6 +40,11 @@ const WilderCard = (props: Iwilder): JSX.Element => {
         refresh={() => props.onWilderDeleted()}
       />
       {data?.wilders.map((wild: Iwilder) => {
+        console.log(
+          "🚀 ~ file: WilderCard.tsx ~ line 85 ~ {data?.wilders.map ~ wild",
+          wild
+        );
+
         return (
           <article className="card" key={wild.id}>
             <img src={Blank_Profile} alt="Jane Doe Profile" />

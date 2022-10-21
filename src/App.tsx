@@ -8,12 +8,13 @@ import Footer from "./components/Footer/Footer";
 
 function App() {
   const [wilders, setWilders] = useState<Array<string>>([]);
+  console.log("🚀 ~ file: App.tsx ~ line 11 ~ App ~ wilders", wilders);
   const [id, setId] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const fetchData = async (): Promise<Function> => {
     try {
-      const request = await fetch("http://localhost:3000/api/wilders");
+      const request = await fetch("http://localhost:5070/api/wilders");
       const response = await request.json();
       setWilders(response);
       return response;
