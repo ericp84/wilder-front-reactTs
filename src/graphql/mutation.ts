@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const DELETE_WILDER = gql`
-  mutation Mutation($deleteOneWilderId: ID!) {
-    deleteOneWilder(id: $deleteOneWilderId) {
+export const DELETE_USER = gql`
+  mutation Mutation($deleteOneUserId: ID!) {
+    deleteOneUser(id: $deleteOneUserId) {
       id
       name
       city
@@ -13,9 +13,9 @@ export const DELETE_WILDER = gql`
   }
 `;
 
-export const UPDATE_WILDER = gql`
-  mutation Mutation($city: String!, $name: String!, $updateWilderId: ID!) {
-    updateWilder(city: $city, name: $name, id: $updateWilderId) {
+export const UPDATE_USER = gql`
+  mutation Mutation($city: String!, $name: String!, $updateUserId: ID!) {
+    updateUser(city: $city, name: $name, id: $updateUserId) {
       id
       name
       city
@@ -23,9 +23,9 @@ export const UPDATE_WILDER = gql`
   }
 `;
 
-export const CREATE_WILDER = gql`
-  mutation CreateWilder($city: String!, $name: String!) {
-    createWilder(city: $city, name: $name) {
+export const CREATE_USER = gql`
+  mutation createUser($city: String!, $name: String!) {
+    createUser(city: $city, name: $name) {
       id
       name
       city
@@ -45,6 +45,15 @@ export const CREATE_UPVOTE = gql`
 export const UPVOTE = gql`
   mutation Mutation($skillId: ID!, $wilderId: ID!, $upvoteId: ID!) {
     upVote(skillId: $skillId, wilderId: $wilderId, upvoteId: $upvoteId) {
+      id
+      upvotes
+    }
+  }
+`;
+
+export const ADD_UPVOTE = gql`
+  mutation Mutation($upvoteId: ID!) {
+    upVote(upvoteId: $upvoteId) {
       id
       upvotes
     }
